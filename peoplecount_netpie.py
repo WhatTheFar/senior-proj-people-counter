@@ -135,21 +135,44 @@ def checkmark(Frame, frameSize, sizeLong, OffsetY, OffsetX):
     return sizeLong, OffsetY, OffsetX
 
 
-#global variables
-# Set initial frame size.
-frameSize = (800, 600)
-areaFrame = frameSize[0] * frameSize[1]
-
-# minimum size 0.01%/maximum size 0.1%
-MinCountourArea = areaFrame * 0.01
-MaxCountourArea = areaFrame * 0.1
+# Global variables
+# initialize the frame dimensions (we'll set them as soon as we read
+# the first frame from the video)
+W = None
+H = None
+frameSize = (600, 800)
+areaFrame = None
+MinContourArea = None
+MaxContourArea = None
 
 # line's position
-OffsetY = int(frameSize[1] * 0.25)
-OffsetX = -30
-sizeLong = int(frameSize[0] * 0.3)
-#padding = frameSize[1] * 0.02
-margin = frameSize[1] * 0.03
+OffsetY = 0
+OffsetX = 0
+sizeLong = 0
+padding = 0
+margin = 0
+
+
+def setInitialVaraible(w, h):
+    global W, H, frameSize, areaFrame, MinContourArea, MaxContourArea, OffsetX, OffsetY, sizeLong, padding, margin
+    # Set initial frame size.
+    W = w
+    H = h
+    frameSize = (w, h)
+    areaFrame = frameSize[0] * frameSize[1]
+
+    # minimum size 0.01%/maximum size 0.1%
+    MinContourArea = areaFrame * 0.05
+    MaxContourArea = areaFrame * 0.5
+
+    # line's position
+    OffsetY = int(frameSize[1] * 0.6)
+    # OffsetY = 0
+    OffsetX = -30
+    sizeLong = int(frameSize[0] * 0.4)
+    #padding = frameSize[1] * 0.02
+    margin = frameSize[1] * 0.03
+
 
 # tracking variable
 pointMove = []
@@ -192,10 +215,16 @@ while True:
         # cannot fetch Frame
         if (Frame is None):
             break
-        Frame = imutils.resize(Frame, width=frameSize[0])
+        Frame = imutils.resize(Frame, width=500)
+
     # cannot fetch Frame
     if (Frame is None):
         break
+
+    # if the frame dimensions are empty, set them
+    if W is None or H is None:
+        (h, w) = Frame.shape[:2]
+        setInitialVaraible(w, h)
 
     # gray-scale convertion and Gaussian blur filter applying
     Gray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
@@ -226,9 +255,9 @@ while True:
         rec = cv2.boundingRect(c)
         p1, p2 = definePoint12(rec)
         cv2.rectangle(Frame, p1, p2, (0, 255, 200), 2)
-        if Area > MaxCountourArea:
+        if Area > MaxContourArea:
             continue
-        elif Area < MinCountourArea:
+        elif Area < MinContourArea:
             break
 
         # find object's centroid
