@@ -40,7 +40,7 @@ def setInitialVaraible(w, h):
     # OffsetY = 0
     OffsetX = -30
     sizeLong = int(frameSize[0] * 0.4)
-    #padding = frameSize[1] * 0.02
+    # padding = frameSize[1] * 0.02
     margin = frameSize[1] * 0.03
 
 
@@ -102,7 +102,7 @@ while True:
     if idle_time < 2:
         idle_time += 1
         continue
-        #OffsetY += 15
+        # OffsetY += 15
     fgmask = fgbg.apply(Gray)
     fgmask = cv2.erode(fgmask, None, 20)
 
@@ -112,7 +112,7 @@ while True:
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 
     # plot reference lines (entrance and exit lines)
-    centerLine = (int(frameSize[0]/2 - OffsetX), int(frameSize[1]-OffsetY))
+    centerLine = (int(frameSize[0] / 2 - OffsetX), int(frameSize[1] - OffsetY))
     CoorExitLine1 = (centerLine[0] - sizeLong, centerLine[1])
     CoorExitLine2 = (centerLine[0] + sizeLong, centerLine[1])
     cv2.line(Frame, CoorExitLine1, CoorExitLine2, (0, 0, 255), 2)
@@ -145,13 +145,17 @@ while True:
             colorB = 255
 
         cv2.rectangle(Frame, p1, p2, (colorB, int(
-            (indexTrack+1)*70), colorR), 2)
+            (indexTrack + 1) * 70), colorR), 2)
 
-        if abs(firstCenter[1]-CoorExitLine1[1]) > margin and abs(ObjectCentroid[1]-CoorExitLine1[1]) > margin:
-            if not CheckLineCrossing(firstCenter, CoorExitLine1, CoorExitLine2) and CheckLineCrossing(ObjectCentroid, CoorExitLine1, CoorExitLine2):
+        if abs(firstCenter[1] - CoorExitLine1[1]) > margin and abs(ObjectCentroid[1] - CoorExitLine1[1]) > margin:
+            if not CheckLineCrossing(firstCenter, CoorExitLine1, CoorExitLine2) and CheckLineCrossing(ObjectCentroid,
+                                                                                                      CoorExitLine1,
+                                                                                                      CoorExitLine2):
                 countPeople -= 1
                 firstTrack[indexTrack] = rec
-            elif not CheckLineCrossing(ObjectCentroid, CoorExitLine1, CoorExitLine2) and CheckLineCrossing(firstCenter, CoorExitLine1, CoorExitLine2):
+            elif not CheckLineCrossing(ObjectCentroid, CoorExitLine1, CoorExitLine2) and CheckLineCrossing(firstCenter,
+                                                                                                           CoorExitLine1,
+                                                                                                           CoorExitLine2):
                 countPeople += 1
                 firstTrack[indexTrack] = rec
     for i in range(len(statusMove)):
