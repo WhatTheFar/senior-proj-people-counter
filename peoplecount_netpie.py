@@ -111,8 +111,9 @@ def checkmark(Frame, frameSize, sizeLong, OffsetY, OffsetX):
     mask = cv2.inRange(image_hsv, lower, upper)
     output = cv2.bitwise_and(Frame, Frame, mask=mask)
     # Dilate image and find all the contours
-    _, cnts, _ = cv2.findContours(
+    cnts = cv2.findContours(
         mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
     for cnt in cnts:
         Area = cv2.contourArea(cnt)
@@ -206,8 +207,9 @@ while True:
     fgmask = fgbg.apply(Gray)
     fgmask = cv2.erode(fgmask, None, 20)
 
-    _, cnts, _ = cv2.findContours(
+    cnts = cv2.findContours(
         fgmask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    cnts = imutils.grab_contours(cnts)
     cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 
     # plot reference lines (entrance and exit lines)
