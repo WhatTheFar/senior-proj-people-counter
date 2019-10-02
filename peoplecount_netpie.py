@@ -94,7 +94,7 @@ while True:
     # if the frame dimensions are empty, set them
     if W is None or H is None:
         (h, w) = Frame.shape[:2]
-        setInitialVaraible(w, h)
+        setInitialVariable(w, h)
 
     # gray-scale convertion and Gaussian blur filter applying
     Gray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
