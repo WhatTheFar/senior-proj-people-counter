@@ -1,37 +1,9 @@
-import microgear.client as microgear
 import cv2
 import numpy as np
 import imutils
 from imutils.video import VideoStream
 import time
 import argparse
-
-key = 'your key'
-secret = 'your secret key'
-app = 'your app id'
-microgear.create(key, secret, app, {'debugmode': True})
-connected = False
-
-
-def connection():
-    global connected
-    connected = True
-    print("Connected")
-
-
-def callback_error(msg):
-    print(msg)
-
-
-def callback_reject(msg):
-    print(msg)
-    print("Script exited")
-    exit(0)
-
-
-def subscription(topic, msg):
-    if msg == "b'?'":
-        microgear.publish("/countPeople", countPeople)
 
 
 def CheckLineCrossing(centerMove, CoorExitLine1, CoorExitLine2):
@@ -208,14 +180,6 @@ else:
 time.sleep(2.0)
 
 
-this_name = 'CAMERA'
-microgear.setname(this_name)
-microgear.on_reject = callback_reject
-microgear.on_connect = connection
-microgear.on_message = subscription
-microgear.on_error = callback_error
-microgear.connect(False)
-microgear.publish("/countPeople", countPeople)
 # Get the next frame.
 while True:
     # If using a webcam instead of the Pi Camera,
@@ -286,13 +250,9 @@ while True:
             if not CheckLineCrossing(firstCenter, CoorExitLine1, CoorExitLine2) and CheckLineCrossing(ObjectCentroid, CoorExitLine1, CoorExitLine2):
                 countPeople -= 1
                 firstTrack[indexTrack] = rec
-                microgear.publish(
-                    "/countPeople", countPeople, {'retain': True})
             elif not CheckLineCrossing(ObjectCentroid, CoorExitLine1, CoorExitLine2) and CheckLineCrossing(firstCenter, CoorExitLine1, CoorExitLine2):
                 countPeople += 1
                 firstTrack[indexTrack] = rec
-                microgear.publish(
-                    "/countPeople", countPeople, {'retain': True})
     for i in range(len(statusMove)):
         if statusMove[i] <= 0:
             popIndex(firstTrack, pointMove, statusMove, i)
