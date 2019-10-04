@@ -1,10 +1,12 @@
 import argparse
-import counter_utils
-from multiprocessing import Process, Value
 import ctypes
-import requests
+import multiprocessing as mp
 from datetime import datetime
+
 import dateutil.parser
+import requests
+
+import counter_utils
 import netpie_utils
 
 if __name__ == '__main__':
@@ -19,8 +21,8 @@ if __name__ == '__main__':
     ap.add_argument("-o", "--output", type=str, help="path to optional output video file")
     args = vars(ap.parse_args())
 
-    people_count_value = Value(ctypes.c_int, 0)
-    should_reset_bg_value = Value(ctypes.c_bool, False)
+    people_count_value = mp.Value(ctypes.c_int, 0)
+    should_reset_bg_value = mp.Value(ctypes.c_bool, False)
 
 
     def on_people_count(people_diff):
@@ -64,14 +66,14 @@ if __name__ == '__main__':
             people_count_value.value = int(message)
 
 
-    netpie_process = Process(target=netpie_utils.start_netpie,
-                             args=(
-                                 args['key'],
-                                 args['secret'],
-                                 args['appid'],
-                                 ['/iot', '/people/bg', '/people/set'],
-                                 on_message,
-                                 args['debug'],))
+    netpie_process = mp.Process(target=netpie_utils.start_netpie,
+                                args=(
+                                    args['key'],
+                                    args['secret'],
+                                    args['appid'],
+                                    ['/iot', '/people/bg', '/people/set'],
+                                    on_message,
+                                    args['debug'],))
     netpie_process.start()
 
     counter_utils.start_simple_counter(video=args['video'],
