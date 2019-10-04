@@ -5,7 +5,7 @@ from imutils.video import VideoStream
 import time
 
 
-def start_simple_counter(video, debug, output, on_people_count):
+def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=False, on_people_count=None):
     def check_line_crossing(center_move, coor_exit_line1, coor_exit_line2):
         (x, y) = center_move
         # outside
@@ -131,7 +131,7 @@ def start_simple_counter(video, debug, output, on_people_count):
     # the first frame from the video)
     w = None
     h = None
-    frame_size = (600, 800)
+    frame_size = (320, 240)
     area_frame = None
     min_contour_area = None
     max_contour_area = None
@@ -179,7 +179,7 @@ def start_simple_counter(video, debug, output, on_people_count):
 
     # Initialize mutithreading the video stream.
     if video is None:
-        camera = VideoStream(src=0, usePiCamera=True, resolution=frame_size, framerate=32).start()
+        camera = VideoStream(src=0, usePiCamera=use_pi_camera, resolution=frame_size, framerate=32).start()
     else:
         camera = cv2.VideoCapture(video)
 
