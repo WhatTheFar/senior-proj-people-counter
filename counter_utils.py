@@ -348,5 +348,9 @@ def start_simple_counter(video, debug, output, on_people_count):
         writer.release()
 
     # cleanup the camera and close any open windows
-    camera.release()
+    if video is not None:
+        camera.release()
+    else:
+        camera.stop()
+
     cv2.destroyAllWindows()
