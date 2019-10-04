@@ -118,6 +118,10 @@ while True:
         continue
         # OffsetY += 15
     fgmask = fgbg.apply(Gray)
+
+    if isDebug:
+        fgmask_original = fgmask.copy()
+
     fgmask = cv2.erode(fgmask, None, 20)
 
     cnts = cv2.findContours(
