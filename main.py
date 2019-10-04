@@ -1,5 +1,7 @@
 import argparse
 import ctypes
+from logging.handlers import RotatingFileHandler
+import logging
 import multiprocessing as mp
 from datetime import datetime
 
@@ -15,11 +17,28 @@ if __name__ == '__main__':
     ap.add_argument("--key", required=True, help="NETPIE key")
     ap.add_argument("--secret", required=True, help="NETPIE secret")
     ap.add_argument("--appid", required=True, help="NETPIE appid")
+
+    ap.add_argument("--server-url", required=True, help="backend server url")
+
+    ap.add_argument("-d", "--debug", default=False, action="store_true", help="non-headless and wait for key")
+
     ap.add_argument("-v", "--video", help="path to the video file")
     ap.add_argument("--pi", "--use-pi-camera", default=False, action="store_true", help="use Pi camera")
-    ap.add_argument("-d", "--debug", default=False, action="store_true", help="non-headless and wait for key")
     ap.add_argument("-o", "--output", type=str, help="path to optional output video file")
     args = vars(ap.parse_args())
+
+    # initialize logging configuration
+    logging_handlers = []
+    if args['debug'] is True:
+        logging_level = logging.DEBUG
+        logging_handlers.append(logging.StreamHandler())
+    else:
+        logging_level = logging.INFO
+        logging_handlers.append(RotatingFileHandler('./app.log', maxBytes=100000, backupCount=10))
+
+    logging.basicConfig(level=logging_level,
+                        handlers=logging_handlers,
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
     people_count_value = mp.Value(ctypes.c_int, 0)
     should_reset_bg_value = mp.Value(ctypes.c_bool, False)
@@ -28,7 +47,7 @@ if __name__ == '__main__':
     def on_people_count(people_diff):
         with people_count_value.get_lock():
             people_count_value.value += people_diff
-            print("People: {}".format(people_count_value.value))
+            logging.info("People Count: {}".format(people_count_value.value))
 
 
     def check_should_reset_bg():
@@ -46,18 +65,28 @@ if __name__ == '__main__':
             now = datetime.utcnow()
 
             if now.timestamp() - date.timestamp() > 3:
-                print('Ignore')
+                logging.info('POST People -> Ignored at {}'.format(now.isoformat()))
                 return
 
-            resp = requests.post('http://c7d43fa5.ngrok.io/iot/sensor/people', json={
-                "date": message,
-                "actualDate": now.isoformat(),
-                "people": people_count,
-            })
-            if resp.status_code != 201:
-                if resp.status_code == 400:
-                    print('Bad Request: {}'.format(resp.json()))
-            print('Success: {}'.format(resp.text))
+            for i in range(1, 4):
+                try:
+                    resp = requests.post(f'{args["server_url"]}/iot/sensor/people', json={
+                        "date": message,
+                        "actualDate": now.isoformat(),
+                        "people": people_count,
+                    })
+                    if resp.status_code == 201:
+                        logging.info('POST People -> Success')
+                        break
+                    elif resp.status_code == 400:
+                        logging.error("POST People -> Bad Request: {}".format(resp.json()))
+                        break
+
+                except Exception as e:
+                    logging.exception("POST People -> Exception occurred")
+
+                logging.info('POST People -> Retry attempt #{}'.format(i))
+                continue
 
         elif topic == '/seniorproj/people/bg':
             should_reset_bg_value.value = True
