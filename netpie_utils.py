@@ -3,7 +3,7 @@ import microgear.client as microgear
 import logging
 
 
-def start_netpie(key, secret, appid, on_message=None, debug=False):
+def start_netpie(key, secret, appid, topics=None, on_message=None, debug=False):
     microgear.create(key, secret, appid, {'debugmode': debug})
 
     def on_connect():
@@ -22,7 +22,8 @@ def start_netpie(key, secret, appid, on_message=None, debug=False):
     microgear.on_message = _on_message
     microgear.on_disconnect = on_disconnect
 
-    microgear.subscribe("/iot")
+    for topic in topics:
+        microgear.subscribe(topic)
 
     microgear.connect(True)
 
