@@ -5,7 +5,8 @@ from imutils.video import VideoStream
 import time
 
 
-def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=False, on_people_count=None):
+def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=False, on_people_count=None,
+                         check_should_reset_bg=None):
     def check_line_crossing(center_move, coor_exit_line1, coor_exit_line2):
         (x, y) = center_move
         # outside
@@ -189,6 +190,10 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
     # Debug variables
     fgmask_original = None
 
+    # Variables for resetting background subtractor
+    is_resetting_bg = False
+    bg_reset_count = 0
+
     time.sleep(2.0)
 
     # Get the next frame.
@@ -223,6 +228,26 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             continue
             # OffsetY += 15
         fgmask = fgbg.apply(gray)
+
+        if is_resetting_bg:
+            if bg_reset_count < 20:
+                for x in range(100):
+                    fgmask = fgbg.apply(gray)
+                bg_reset_count += 1
+            else:
+                bg_reset_count = 0
+                is_resetting_bg = False
+
+        if check_should_reset_bg is not None:
+            should_reset_bg = check_should_reset_bg()
+            if should_reset_bg:
+                # initial training for background subtractor
+                if video is None:
+                    is_resetting_bg = True
+                    continue
+                else:
+                    for x in range(1000):
+                        fgmask = fgbg.apply(gray)
 
         if debug:
             fgmask_original = fgmask.copy()
