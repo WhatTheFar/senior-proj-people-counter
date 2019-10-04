@@ -70,8 +70,8 @@ if __name__ == '__main__':
                                  args['secret'],
                                  args['appid'],
                                  ['/iot', '/people/bg', '/people/set'],
-                                 args['debug'],
-                                 on_message))
+                                 on_message,
+                                 args['debug'],))
     netpie_process.start()
 
     counter_utils.start_simple_counter(video=args['video'],
