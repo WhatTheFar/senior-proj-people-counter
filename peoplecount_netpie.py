@@ -9,6 +9,7 @@ from counter_utils import *
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", help="path to the video file")
 ap.add_argument("-d", "--debug", default=False, action="store_true", help="non-headless and wait for key")
+ap.add_argument("-o", "--output", type=str, help="path to optional output video file")
 args = vars(ap.parse_args())
 
 isDebug = args['debug']
@@ -73,6 +74,9 @@ if args["video"] is None:
 else:
     camera = cv2.VideoCapture(args["video"])
 
+# initialize the video writer (we'll instantiate later if need be)
+writer = None
+
 # Debug variables
 fgmask_original = None
 
@@ -100,6 +104,11 @@ while True:
     if W is None or H is None:
         (h, w) = Frame.shape[:2]
         setInitialVariable(w, h)
+
+    # if we are supposed to be writing a video to disk, initialize the writer
+    if args["output"] is not None and writer is None:
+        fourcc = cv2.VideoWriter_fourcc(*"MJPG")
+        writer = cv2.VideoWriter(args["output"], fourcc, 30, (W, H), True)
 
     # gray-scale convertion and Gaussian blur filter applying
     Gray = cv2.cvtColor(Frame, cv2.COLOR_BGR2GRAY)
@@ -171,6 +180,10 @@ while True:
     # Write entrance and exit counter values on frame and shows it
     cv2.putText(Frame, "count: {}".format(str(countPeople)), (10, 50),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (250, 0, 1), 2)
+
+    # check to see if we should write the frame to disk
+    if writer is not None:
+        writer.write(Frame)
 
     if isDebug:
         cv2.imshow("Grey", Gray)
