@@ -5,6 +5,14 @@ import time
 import argparse
 from counter_utils import *
 
+# construct the argument parser and parse the arguments
+ap = argparse.ArgumentParser()
+ap.add_argument("-v", "--video", help="path to the video file")
+ap.add_argument("-d", "--debug", default=False, action="store_true", help="non-headless and wait for key")
+args = vars(ap.parse_args())
+
+isDebug = args['debug']
+
 # Global variables
 # initialize the frame dimensions (we'll set them as soon as we read
 # the first frame from the video)
@@ -57,12 +65,6 @@ idle_time = 0
 # object for BackgroundSubtractor
 fgbg = cv2.createBackgroundSubtractorMOG2(
     history=2000, varThreshold=100, detectShadows=False)
-# construct the argument parser and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-v", "--video", help="path to the video file")
-args = vars(ap.parse_args())
-# How sizeLong have we been tracking
-
 
 # Initialize mutithreading the video stream.
 if args["video"] is None:
@@ -70,6 +72,9 @@ if args["video"] is None:
                          resolution=frameSize, framerate=32).start()
 else:
     camera = cv2.VideoCapture(args["video"])
+
+# Debug variables
+fgmask_original = None
 
 time.sleep(2.0)
 
@@ -167,13 +172,29 @@ while True:
     cv2.putText(Frame, "count: {}".format(str(countPeople)), (10, 50),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (250, 0, 1), 2)
 
-    cv2.imshow("Original Frame", Frame)
+    if isDebug:
+        cv2.imshow("Grey", Gray)
+        cv2.moveWindow('Grey', 719, 605)
+        if fgmask_original is not None:
+            cv2.imshow("Mask Original", fgmask_original)
+            cv2.moveWindow('Mask Original', 719, 0)
+        cv2.imshow("Mask", fgmask)
+        cv2.moveWindow('Mask', 719, 315)
+
+        cv2.imshow("Original Frame", Frame)
+
+        # Don't wait for key
+        # if cv2.waitKey(1) & 0xFF == ord('q'):
+        #     break
+
+        # Wait for key
+        k = cv2.waitKey(0) & 0xff
+        if k == ord('q'):
+            break
+
     for i in range(len(statusMove)):
         statusMove[i] -= 1
     idle_time += 1
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
-    # cv2.waitKey(0)
 
 # cleanup the camera and close any open windows
 camera.release()
