@@ -5,7 +5,7 @@ from imutils.video import VideoStream
 import time
 
 
-def start_simple_counter(video, debug, output):
+def start_simple_counter(video, debug, output, on_people_count):
     def check_line_crossing(center_move, coor_exit_line1, coor_exit_line2):
         (x, y) = center_move
         # outside
@@ -279,14 +279,32 @@ def start_simple_counter(video, debug, output):
                         object_centroid,
                         coor_exit_line1,
                         coor_exit_line2):
-                    people_count -= 1
                     first_track[index_track] = rec
+
+                    people_diff = 1
+
                 elif not check_line_crossing(object_centroid, coor_exit_line1, coor_exit_line2) and check_line_crossing(
                         first_center,
                         coor_exit_line1,
                         coor_exit_line2):
-                    people_count += 1
                     first_track[index_track] = rec
+
+                    people_diff = -1
+
+                else:
+                    people_diff = 0
+
+                if people_diff != 0:
+                    # call on_people_count callback
+                    if on_people_count is not None:
+                        new_people_count = on_people_count(people_diff)
+                        if new_people_count is not None:
+                            people_count = new_people_count
+                        else:
+                            people_count += people_diff
+                    else:
+                        people_count += people_diff
+
         for i in range(len(status_move)):
             if status_move[i] <= 0:
                 pop_index(first_track, point_move, status_move, i)
