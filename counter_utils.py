@@ -199,14 +199,11 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
         # If using a video file
         else:
             _, frame = camera.read()
-            # cannot fetch Frame
-            if frame is None:
-                break
-            frame = imutils.resize(frame, width=500)
 
         # cannot fetch Frame
         if frame is None:
             break
+        frame = imutils.resize(frame, width=500)
 
         # if the frame dimensions are empty, set them
         if w is None or h is None:
