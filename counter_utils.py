@@ -328,6 +328,7 @@ def start_simple_counter(video, debug, output, on_people_count):
             cv2.moveWindow('Mask', 719, 315)
 
             cv2.imshow("Original Frame", frame)
+            cv2.moveWindow('Original Frame', 0, 0)
 
             # Don't wait for key
             # if cv2.waitKey(1) & 0xFF == ord('q'):
