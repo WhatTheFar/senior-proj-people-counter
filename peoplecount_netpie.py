@@ -92,12 +92,12 @@ while True:
     else:
         _, Frame = camera.read()
         # cannot fetch Frame
-        if (Frame is None):
+        if Frame is None:
             break
         Frame = imutils.resize(Frame, width=500)
 
     # cannot fetch Frame
-    if (Frame is None):
+    if Frame is None:
         break
 
     # if the frame dimensions are empty, set them
