@@ -32,7 +32,7 @@ padding = 0
 margin = 0
 
 
-def setInitialVaraible(w, h):
+def setInitialVariable(w, h):
     global W, H, frameSize, areaFrame, MinContourArea, MaxContourArea, OffsetX, OffsetY, sizeLong, padding, margin
     # Set initial frame size.
     W = w
