@@ -352,14 +352,15 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             cv2.imshow("Original Frame", frame)
             cv2.moveWindow('Original Frame', 0, 0)
 
-            # Don't wait for key
-            # if cv2.waitKey(1) & 0xFF == ord('q'):
-            #     break
-
-            # Wait for key
-            k = cv2.waitKey(0) & 0xff
-            if k == ord('q'):
-                break
+            if video is None:
+                # Don't wait for key
+                if cv2.waitKey(1) & 0xFF == ord('q'):
+                    break
+            else:
+                # Wait for key
+                k = cv2.waitKey(0) & 0xff
+                if k == ord('q'):
+                    break
 
         for i in range(len(status_move)):
             status_move[i] -= 1
