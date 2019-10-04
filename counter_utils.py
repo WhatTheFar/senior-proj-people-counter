@@ -343,6 +343,10 @@ def start_simple_counter(video, debug, output, on_people_count):
             status_move[i] -= 1
         idle_time += 1
 
+    # check to see if we need to release the video writer pointer
+    if writer is not None:
+        writer.release()
+
     # cleanup the camera and close any open windows
     camera.release()
     cv2.destroyAllWindows()
