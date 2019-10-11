@@ -48,6 +48,7 @@ if __name__ == '__main__':
         with people_count_value.get_lock():
             people_count_value.value += people_diff
             logging.info("People Count: {}".format(people_count_value.value))
+            return people_count_value.value
 
 
     def check_should_reset_bg():
