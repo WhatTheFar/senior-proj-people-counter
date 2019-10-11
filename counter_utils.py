@@ -3,7 +3,7 @@ import numpy as np
 import imutils
 from imutils.video import VideoStream
 import time
-
+import logging
 
 def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=False, on_people_count=None,
                          check_should_reset_bg=None):
@@ -237,11 +237,13 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             else:
                 bg_reset_count = 0
                 is_resetting_bg = False
+                logging.info("Counter RESET -> Complete")
 
         if check_should_reset_bg is not None:
             should_reset_bg = check_should_reset_bg()
             if should_reset_bg:
                 # initial training for background subtractor
+                logging.info("Counter RESET -> Start")
                 if video is None:
                     is_resetting_bg = True
                     continue
