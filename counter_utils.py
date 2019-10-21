@@ -176,7 +176,10 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
     idle_time = 0
 
     # object for BackgroundSubtractor
-    fgbg = cv2.createBackgroundSubtractorMOG2(history=2000, varThreshold=100, detectShadows=False)
+    bg_subtractor_history = 4000
+    bg_reset_batch = 100
+    bg_reset_iteration = int(bg_subtractor_history / bg_reset_batch)
+    fgbg = cv2.createBackgroundSubtractorMOG2(history=bg_subtractor_history, varThreshold=100, detectShadows=False)
 
     # Initialize mutithreading the video stream.
     if video is None:
@@ -230,8 +233,8 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
         fgmask = fgbg.apply(gray)
 
         if is_resetting_bg:
-            if bg_reset_count < 20:
-                for x in range(100):
+            if bg_reset_count < bg_reset_iteration:
+                for x in range(bg_reset_batch):
                     fgmask = fgbg.apply(gray)
                 bg_reset_count += 1
             else:
