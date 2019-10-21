@@ -233,16 +233,6 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             # OffsetY += 15
         fgmask = fgbg.apply(gray)
 
-        if is_resetting_bg:
-            if bg_reset_count < bg_reset_iteration:
-                for x in range(bg_reset_batch):
-                    fgmask = fgbg.apply(gray)
-                bg_reset_count += 1
-            else:
-                bg_reset_count = 0
-                is_resetting_bg = False
-                logging.info("Counter RESET -> Complete")
-
         if check_should_reset_bg is not None:
             should_reset_bg = check_should_reset_bg()
             if should_reset_bg:
@@ -250,11 +240,21 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
                 logging.info("Counter RESET -> Start")
                 if video is None:
                     is_resetting_bg = True
-                    continue
                 else:
                     for x in range(1000):
                         fgmask = fgbg.apply(gray)
                     logging.info("Counter RESET -> Complete")
+
+        if is_resetting_bg:
+            if bg_reset_count < bg_reset_iteration:
+                for x in range(bg_reset_batch):
+                    fgmask = fgbg.apply(gray)
+                bg_reset_count += 1
+                continue
+            else:
+                bg_reset_count = 0
+                is_resetting_bg = False
+                logging.info("Counter RESET -> Complete")
 
         if debug:
             fgmask_original = fgmask.copy()
