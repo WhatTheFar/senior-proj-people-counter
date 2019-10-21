@@ -154,7 +154,7 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
         area_frame = frame_size[0] * frame_size[1]
 
         # minimum size 0.01%/maximum size 0.1%
-        min_contour_area = area_frame * 0.05
+        min_contour_area = area_frame * 0.02
         max_contour_area = area_frame * 0.5
 
         # line's position
