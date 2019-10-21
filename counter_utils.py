@@ -253,6 +253,7 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
                 else:
                     for x in range(1000):
                         fgmask = fgbg.apply(gray)
+                    logging.info("Counter RESET -> Complete")
 
         if debug:
             fgmask_original = fgmask.copy()
