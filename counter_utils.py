@@ -5,6 +5,7 @@ from imutils.video import VideoStream
 import time
 import logging
 
+
 def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=False, on_people_count=None,
                          check_should_reset_bg=None):
     def check_line_crossing(center_move, coor_exit_line1, coor_exit_line2):
