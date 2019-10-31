@@ -241,8 +241,7 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
                 if video is None:
                     is_resetting_bg = True
                 else:
-                    for x in range(1000):
-                        fgmask = fgbg.apply(gray)
+                    fgmask = fgbg.apply(gray, learning_rate=1)
                     logging.info("Counter RESET -> Complete")
 
         if is_resetting_bg:
