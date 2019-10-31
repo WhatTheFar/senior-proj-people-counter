@@ -21,6 +21,7 @@ if __name__ == '__main__':
     ap.add_argument("--server-url", required=True, help="backend server url")
 
     ap.add_argument("-d", "--debug", default=False, action="store_true", help="non-headless and wait for key")
+    ap.add_argument("--dry-run", default=False, action="store_true", help="dry-run")
 
     ap.add_argument("-v", "--video", help="path to the video file")
     ap.add_argument("--pi", "--use-pi-camera", default=False, action="store_true", help="use Pi camera")
@@ -67,6 +68,10 @@ if __name__ == '__main__':
 
             if now.timestamp() - date.timestamp() > 3:
                 logging.info('POST People -> Ignored at {}'.format(now.isoformat()))
+                return
+
+            if args["dry_run"]:
+                logging.info('POST People -> Ignored by --dry-run')
                 return
 
             for i in range(1, 4):
