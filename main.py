@@ -34,7 +34,7 @@ if __name__ == '__main__':
         logging_handlers.append(logging.StreamHandler())
     else:
         logging_level = logging.INFO
-        logging_handlers.append(RotatingFileHandler('./app.log', maxBytes=1000000, backupCount=40))
+        logging_handlers.append(RotatingFileHandler('./log/app.log', maxBytes=1000000, backupCount=40))
 
     logging.basicConfig(level=logging_level,
                         handlers=logging_handlers,
