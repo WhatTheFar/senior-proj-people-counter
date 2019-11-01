@@ -347,12 +347,12 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
 
         if debug:
             cv2.imshow("Grey", gray)
-            cv2.moveWindow('Grey', 719, 605)
-            if fgmask_original is not None:
-                cv2.imshow("Mask Original", fgmask_original)
-                cv2.moveWindow('Mask Original', 719, 0)
+            cv2.moveWindow('Grey', 500, 0)
+            # if fgmask_original is not None:
+                # cv2.imshow("Mask Original", fgmask_original)
+                # cv2.moveWindow('Mask Original', 500, 0)
             cv2.imshow("Mask", fgmask)
-            cv2.moveWindow('Mask', 719, 315)
+            cv2.moveWindow('Mask', 500, 340)
 
             cv2.imshow("Original Frame", frame)
             cv2.moveWindow('Original Frame', 0, 0)
