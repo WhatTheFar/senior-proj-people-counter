@@ -159,9 +159,9 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
         max_contour_area = area_frame * 0.5
 
         # line's position
-        offset_y = int(frame_size[1] * 0.6)
-        offset_x = -30
-        size_long = int(frame_size[0] * 0.4)
+        offset_y = int(frame_size[1] * 0.5)
+        offset_x = 0
+        size_long = int(frame_size[0] * 0.5)
         # padding = frame_size[1] * 0.02
         margin = frame_size[1] * 0.03
 
