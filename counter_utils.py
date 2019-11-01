@@ -160,7 +160,6 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
 
         # line's position
         offset_y = int(frame_size[1] * 0.6)
-        # OffsetY = 0
         offset_x = -30
         size_long = int(frame_size[0] * 0.4)
         # padding = frame_size[1] * 0.02
