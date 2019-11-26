@@ -1,6 +1,6 @@
 import argparse
 import ctypes
-from logging.handlers import RotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 import logging
 import multiprocessing as mp
 from datetime import datetime
@@ -35,7 +35,7 @@ if __name__ == '__main__':
         logging_handlers.append(logging.StreamHandler())
     else:
         logging_level = logging.INFO
-        logging_handlers.append(RotatingFileHandler('./log/app.log', maxBytes=1000000, backupCount=40))
+        logging_handlers.append(TimedRotatingFileHandler('./log/app.log', when="midnight", interval=1))
 
     logging.basicConfig(level=logging_level,
                         handlers=logging_handlers,
