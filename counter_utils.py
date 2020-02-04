@@ -4,10 +4,28 @@ import imutils
 from imutils.video import VideoStream
 import time
 import logging
+import logging.handlers
+
+from constant import COUNTER_LOGGER
+
+
+def counter_process(log_queue, video=None, debug=False, output=None, use_pi_camera=False,
+                    on_people_count=None,
+                    check_should_reset_bg=None):
+    h = logging.handlers.QueueHandler(log_queue)  # Just the one handler needed
+    root_logger = logging.getLogger()
+    root_logger.addHandler(h)
+    # send all messages, for demo; no other level or filter logic applied.
+    root_logger.setLevel(logging.DEBUG)
+
+    start_simple_counter(video=video, debug=debug, output=output, use_pi_camera=use_pi_camera,
+                         on_people_count=on_people_count, check_should_reset_bg=check_should_reset_bg)
 
 
 def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=False, on_people_count=None,
                          check_should_reset_bg=None):
+    logger = logging.getLogger(COUNTER_LOGGER)
+
     def check_line_crossing(center_move, coor_exit_line1, coor_exit_line2):
         (x, y) = center_move
         # outside
@@ -237,12 +255,12 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             should_reset_bg = check_should_reset_bg()
             if should_reset_bg:
                 # initial training for background subtractor
-                logging.info("Counter RESET -> Start")
+                logger.info("Counter RESET -> Start")
                 if video is None:
                     is_resetting_bg = True
                 else:
                     fgmask = fgbg.apply(gray, learningRate=1)
-                    logging.info("Counter RESET -> Complete")
+                    logger.info("Counter RESET -> Complete")
 
         if is_resetting_bg:
             if bg_reset_count < bg_reset_iteration:
@@ -252,7 +270,7 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             else:
                 bg_reset_count = 0
                 is_resetting_bg = False
-                logging.info("Counter RESET -> Complete")
+                logger.info("Counter RESET -> Complete")
 
         if debug:
             fgmask_original = fgmask.copy()
@@ -349,8 +367,8 @@ def start_simple_counter(video=None, debug=False, output=None, use_pi_camera=Fal
             cv2.imshow("Grey", gray)
             cv2.moveWindow('Grey', 500, 0)
             # if fgmask_original is not None:
-                # cv2.imshow("Mask Original", fgmask_original)
-                # cv2.moveWindow('Mask Original', 500, 0)
+            # cv2.imshow("Mask Original", fgmask_original)
+            # cv2.moveWindow('Mask Original', 500, 0)
             cv2.imshow("Mask", fgmask)
             cv2.moveWindow('Mask', 500, 340)
 

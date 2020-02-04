@@ -1,21 +1,35 @@
 import argparse
 import microgear.client as microgear
 import logging
+import logging.handlers
+
+from constant import NETPIE_LOGGER
+
+
+def netpie_process(log_queue, key, secret, appid, topics=None, on_message=None, debug=False):
+    h = logging.handlers.QueueHandler(log_queue)  # Just the one handler needed
+    root_logger = logging.getLogger()
+    root_logger.addHandler(h)
+    # send all messages, for demo; no other level or filter logic applied.
+    root_logger.setLevel(logging.DEBUG)
+
+    start_netpie(key, secret, appid, topics=topics, on_message=on_message, debug=debug)
 
 
 def start_netpie(key, secret, appid, topics=None, on_message=None, debug=False):
+    logger = logging.getLogger(NETPIE_LOGGER)
     microgear.create(key, secret, appid, {'debugmode': debug})
 
     def on_connect():
-        logging.info("Now I am connected with netpie")
+        logger.info("Now I am connected with netpie")
 
     def _on_message(topic, message):
-        logging.info(topic + " -> " + message)
+        logger.info(topic + " -> " + message)
 
         on_message(topic, message[2:-1])
 
     def on_disconnect():
-        logging.info("disconnected")
+        logger.info("disconnected")
 
     microgear.setalias("people_counter")
     microgear.on_connect = on_connect
